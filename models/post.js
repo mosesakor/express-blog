@@ -3,7 +3,6 @@ var mongoose = requie('mongoose');
 var Schema = mongoose.Schema;
 
 var PostSchema = new Schema({
-    id: Schema.Types.ObjectId,
     date_posted: {type: Date, default: Date.now},
     author: {type: Schema.ObjectId, ref: 'User', required: true },
     title: {type: String, required: true, maxLength: 500},
