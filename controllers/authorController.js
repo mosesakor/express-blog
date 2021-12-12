@@ -1,4 +1,4 @@
-const User = require('../models/user');
+const Author = require("../models/author");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const { body, validationResult } = require("express-validator");
@@ -9,7 +9,7 @@ exports.signup = [
     .escape()
     .custom(async (username) => {
       try {
-        const existingUsername = await User.findOne({ username: username });
+        const existingUsername = await Author.findOne({ username: username });
         if (existingUsername) {
           throw new Error("username already in use");
         }
@@ -39,7 +39,7 @@ exports.signup = [
         return next(err);
       }
       res.json({
-        message: "Signed-up sucessfuly",
+        message: `${req.user} Signed-up sucessfuly`,
         user: req.user,
       });
     })(req, res, next);
