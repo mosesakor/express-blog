@@ -1,18 +1,24 @@
-var mongoose = requie('mongoose');
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-var Schema = mongoose.Schema;
-
-var PostSchema = new Schema({
-    date_posted: {type: Date, default: Date.now},
-    author: {type: Schema.ObjectId, ref: 'User', required: true },
-    title: {type: String, required: true, maxLength: 500},
-    body: {type: String, required: true, maxLength: 5000},
+const postSchema = new Schema({
+  title: { type: String, required: true },
+  date: { default: Date.now(), type: Date },
+  text: { required: true, type: String },
+  author_name: { required: true, type: String },
+  published: { default: false, type: Boolean },
 });
 
-PostSchema
-.virtual('url'
-.length(function () {
-    return '/catalog/post/+this._id';
-}));
+postSchema.virtual("date_formated").get(function () {
+  return this.date.toLocaleDateString("en-gb", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minutes: "2-digit",
+  });
+});
 
-module.exports = mongoose.model('Post', PostSchema);
+const Post = mongoose.model("Post", postSchema);
+
+module.exports = Post;

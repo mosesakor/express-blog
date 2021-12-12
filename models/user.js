@@ -1,19 +1,30 @@
-var mongoose = requie('mongoose');
+var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+const bcrypt = require("bcrypt");
 
-var UserSchema = new Schema({
-    date_created: {type: Date, default: Date.now},
-    email: {type: String, required: true, maxLength: 100},
-    username: {type: String, required: true, maxLength: 100},
-    password: {type: String, required: true, maxLength: 100},
-    posts: [],
+const AuthorSchema = new Schema({
+  username: { required: true, type: String },
+  password: { required: true, type: String },
 });
 
-UserSchema
-.virtual('url'
-.length(function () {
-    return '/catalog/user/+this._id';
-}));
+AuthorSchema.pre("save", async function (next) {
+  const user = this;
+  const hash = await bcrypt.hash(this.password, 10);
 
-module.exports = mongoose.model('User', UserSchema);
+  this.password = hash;
+  next();
+});
+
+AuthorSchema.methods.isValidPassword = async function (password) {
+  const user = this;
+  const compare = await bcrypt.compare(password, user.password);
+
+  return compare;
+};
+
+const Author = mongoose.model("Author", AuthorSchema);
+
+module.exports = Author;

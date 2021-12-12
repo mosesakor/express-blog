@@ -1,18 +1,23 @@
-var mongoose = requie('mongoose');
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-var Schema = mongoose.Schema;
-
-var CommentSchema = new Schema({
-    date_posted: {type: Date, default: Date.now},
-    post_id: {type: Schema.ObjectId, ref: 'Post', required: true },
-    author_id: {type: Schema.ObjectId, ref: 'User', required: true },
-    body: {type: String, required: true, maxLength: 5000},
+const commentSchema = new Schema({
+  date: { default: Date.now(), type: Date },
+  text: { required: true, type: String },
+  user: { required: true, type: String },
+  postId: { type: String, required: true },
 });
 
-CommentSchema
-.virtual('url'
-.length(function () {
-    return '/catalog/comment/+this._id';
-}));
+commentSchema.virtual("date_formated").get(function () {
+  return this.date.toLocaleDateString("en-gb", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minutes: "2-digit",
+  });
+});
 
-module.exports = mongoose.model('Comment', CommentSchema);
+const Comment = mongoose.model("Comment", commentSchema);
+
+module.exports = Comment;
